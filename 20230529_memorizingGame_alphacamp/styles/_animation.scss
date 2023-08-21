@@ -1,0 +1,34 @@
+/* animation */
+@mixin animation($name, $duration, $iteration) {
+  animation-name: $name;
+  animation-duration: $duration;
+  animation-iteration-count: $iteration;
+}
+
+@keyframes completedColor {
+  50% {
+    color: rgba($blue-1, 0.7);
+  }
+
+  75% {
+    color: rgba($yellow-1, 0.85);
+  }
+
+  90% {
+    color: rgba($red-1, 0.9);
+  }
+
+  100% {
+    color: $red-1;
+  }
+}
+
+@keyframes wrongAnimation {
+  50% {
+    border: solid 2px $yellow-1;
+  }
+
+  100% {
+    border: solid 2px $yellow-2;
+  }
+}

@@ -1,0 +1,46 @@
+main {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  width: 85%;
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    flex: 0 1 7%;
+    height: 8vw;
+    margin: 2px;
+    box-sizing: border-box;
+    border: 2px solid $grey-1;
+
+    img {
+      max-width: 30%;
+      align-self: center;
+    }
+
+    p {
+      margin: 3px;
+      font-size: 10px;
+
+      &:last-child {
+        transform: rotate(180deg);
+      }
+
+    }
+
+  }
+
+  .back {
+    background: url('https://assets-lighthouse.alphacamp.co/uploads/image/file/9222/ExportedContentImage_00.png');
+    background-size: cover;
+  }
+
+  .paired {
+    background-color: $blue-2;
+  }
+
+  .wrong {
+    @include animation(wrongAnimation, 0.2s, 5);
+  }
+}
