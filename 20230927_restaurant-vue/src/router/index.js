@@ -44,7 +44,31 @@ const routes = [
     name: "restaurant-dashboard",
     component: () => import("@/views/RestaurantDashboard.vue"),
   },
-
+  {
+    path: "/admin",
+    exact: true,
+    redirect: "/admin/restaurants",
+  },
+  {
+    path: "/admin/restaurants",
+    name: "admin-restaurants",
+    component: () => import("@/views/AdminRestaurants.vue"),
+  },
+  {
+    path: "/admin/restaurants/new",
+    name: "admin-restaurant-new",
+    component: () => import("../views/AdminRestaurantNew.vue"),
+  },
+  {
+    path: "/admin/restaurants/:id",
+    name: "admin-restaurant",
+    component: () => import("../views/AdminRestaurant.vue"),
+  },
+  {
+    path: "/admin/restaurants/:id/edit",
+    name: "admin-restaurant-edit",
+    component: () => import("../views/AdminRestaurantEdit.vue"),
+  },
   {
     path: "/users/top",
     name: "users-top",

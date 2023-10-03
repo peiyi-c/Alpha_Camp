@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="my-4">所有評論：</h2>
+    <h2 class="my-4">All comments:</h2>
     <div v-for="comment in restaurantComments" :key="comment.id">
       <blockquote class="blockquote mb-0">
         <button
