@@ -34,8 +34,8 @@
       </div>
 
       <button
-        class="btn btn-lg btn-primary btn-block mb-3"
         :disabled="isProcessing"
+        class="btn btn-lg btn-primary btn-block mb-3"
         type="submit"
       >
         Submit
@@ -53,21 +53,55 @@
 </template>
 
 <script>
+import authorizationAPI from "@/apis/authorization.js";
+import { Toast } from "@/utils/helpers.js";
+
 export default {
   data() {
     return {
       email: "",
       password: "",
+      isProcessing: false,
     };
   },
   methods: {
-    handleSubmit() {
-      const data = JSON.stringify({
-        email: this.email,
-        password: this.password,
-      });
-      // TODO: verfiy with backend if login credentials are correct
-      console.log("data", data);
+    handleSubmit(e) {
+      if (!this.email || !this.password) {
+        Toast.fire({
+          icon: "warning",
+          title: "Please fill out email and password",
+        });
+        return;
+      }
+      this.isProcessing = true;
+
+      authorizationAPI
+        .signIn({
+          email: this.email,
+          password: this.password,
+        })
+        .then((response) => {
+          // data received via API request
+          const { data } = response;
+          // if error throw error
+          if (data.status === "error") {
+            throw new Error(data.message);
+          }
+          // put data.token into localStorage
+          localStorage.setItem("token", data.token);
+          // signin successful, redirect to /restaurants
+          this.$router.push("/restaurants");
+        })
+        .catch((error) => {
+          this.password = "";
+          Toast.fire({
+            icon: "warning",
+            title: "Please make sure your password is correct",
+          });
+          // signin failed
+          this.isProcessing = false;
+          console.log("error", error);
+        });
     },
   },
 };
