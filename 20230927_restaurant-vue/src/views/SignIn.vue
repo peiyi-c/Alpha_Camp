@@ -65,43 +65,83 @@ export default {
     };
   },
   methods: {
-    handleSubmit(e) {
-      if (!this.email || !this.password) {
-        Toast.fire({
-          icon: "warning",
-          title: "Please fill out email and password",
-        });
-        return;
-      }
-      this.isProcessing = true;
+    // handleSubmit(e) {
+    //   if (!this.email || !this.password) {
+    //     Toast.fire({
+    //       icon: "warning",
+    //       title: "Please fill out email and password",
+    //     });
+    //     return;
+    //   }
+    //   this.isProcessing = true;
+    //   authorizationAPI
+    //     .signIn({
+    //       email: this.email,
+    //       password: this.password,
+    //     })
+    //     .then((response) => {
+    //       // data received via API request
+    //       const { data } = response;
+    //       // if error throw error
+    //       if (data.status === "error") {
+    //         throw new Error(data.message);
+    //       }
+    //       // put data.token into localStorage
+    //       localStorage.setItem("token", data.token);
+    //       // signin successful, redirect to /restaurants
+    //       this.$router.push("/restaurants");
+    //     })
+    //     .catch((error) => {
+    //       this.password = "";
+    //       Toast.fire({
+    //         icon: "warning",
+    //         title: "Please make sure your password is correct",
+    //       });
+    //       // signin failed
+    //       this.isProcessing = false;
+    //       console.log("error", error);
+    //     });
+    // },
 
-      authorizationAPI
-        .signIn({
-          email: this.email,
-          password: this.password,
-        })
-        .then((response) => {
-          // data received via API request
-          const { data } = response;
-          // if error throw error
-          if (data.status === "error") {
-            throw new Error(data.message);
-          }
-          // put data.token into localStorage
-          localStorage.setItem("token", data.token);
-          // signin successful, redirect to /restaurants
-          this.$router.push("/restaurants");
-        })
-        .catch((error) => {
-          this.password = "";
+    async handleSubmit(e) {
+      try {
+        if (!this.email || !this.password) {
           Toast.fire({
             icon: "warning",
-            title: "Please make sure your password is correct",
+            title: "Please fill out email and password",
           });
-          // signin failed
-          this.isProcessing = false;
-          console.log("error", error);
+          return;
+        }
+
+        this.isProcessing = true;
+        const response = await authorizationAPI.signIn({
+          email: this.email,
+          password: this.password,
         });
+        // data received via API request
+        const { data } = response;
+        // if error throw error
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        // put data.token into localStorage
+        localStorage.setItem("token", data.token);
+
+        // signin successful, redirect to /restaurants
+        this.$router.push("/restaurants");
+      } catch (error) {
+        // signin failed
+
+        this.password = "";
+        this.isProcessing = false;
+
+        Toast.fire({
+          icon: "warning",
+          title: "請確認您輸入了正確的帳號密碼",
+        });
+      }
     },
   },
 };
