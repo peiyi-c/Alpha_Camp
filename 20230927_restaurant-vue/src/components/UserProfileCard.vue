@@ -30,13 +30,12 @@
 
           <div class="d-flex justify-content-start">
             <div class="mr-2" v-if="isCurrentUser">
-              <!-- <router-link
-              :to="{ name: 'user-edit', params: { id: user.id } }"
-              class="btn btn-primary"
-            >
-              Edit
-            </router-link> -->
-              <button class="btn btn-primary">Edit</button>
+              <router-link
+                :to="{ name: 'user-edit', params: { id: user.id } }"
+                class="btn btn-primary"
+              >
+                Edit
+              </router-link>
             </div>
             <div v-else>
               <button
