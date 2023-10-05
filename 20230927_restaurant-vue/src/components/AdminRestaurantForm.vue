@@ -1,5 +1,5 @@
 <template>
-  <form @submit.stop.prevent="handleSubmit">
+  <form v-show="!isLoading" @submit.stop.prevent="handleSubmit">
     <div class="form-group">
       <label for="name">Name</label>
       <input
@@ -98,38 +98,14 @@
       />
     </div>
 
-    <button type="submit" class="btn btn-primary">Send</button>
+    <button :disabled="isProcessing" type="submit" class="btn btn-primary">
+      {{ isProcessing ? "Processing..." : "Send" }}
+    </button>
   </form>
 </template>
 <script>
-const dummyData = {
-  categories: [
-    {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 2,
-      name: "日本料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 3,
-      name: "義大利料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 4,
-      name: "墨西哥料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-  ],
-};
+import adminAPI from "@/apis/admin.js";
+import { Toast } from "@/utils/helpers.js";
 export default {
   props: {
     initialRestaurant: {
@@ -144,6 +120,10 @@ export default {
         openingHours: "",
       }),
     },
+    isProcessing: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -157,6 +137,7 @@ export default {
         openingHours: "",
       },
       categories: [],
+      isLoading: true,
     };
   },
   created() {
@@ -167,8 +148,21 @@ export default {
     };
   },
   methods: {
-    fetchCategories() {
-      this.categories = dummyData.categories;
+    async fetchCategories() {
+      try {
+        const { data } = await adminAPI.categories.get();
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+        this.categories = data.categories;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        Toast.fire({
+          icon: "error",
+          title: "Can not get restaurant categories, please try it later.",
+        });
+      }
     },
     handleFileChange(e) {
       // *FileList*
@@ -183,6 +177,20 @@ export default {
       }
     },
     handleSubmit(e) {
+      if (!this.restaurant.name) {
+        Toast.fire({
+          icon: "warning",
+          title: "Restaurant name can not be empty",
+        });
+        return;
+      } else if (!this.restaurant.categoryId) {
+        Toast.fire({
+          icon: "warning",
+          title: "Please choose a category",
+        });
+        return;
+      }
+
       // *FormData*
       const form = e.target; // <form></form>
       const formData = new FormData(form);
