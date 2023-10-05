@@ -2,6 +2,11 @@ import { apiHelper } from "@/utils/helpers.js";
 const getToken = () => localStorage.getItem("token");
 
 export default {
+  get({ restaurantId }) {
+    return apiHelper.get(`/restaurants/${restaurantId}`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+  },
   getRestaurants({ page, categoryId }) {
     const searchParams = new URLSearchParams({ page, categoryId });
     // axios.get(url, config)
