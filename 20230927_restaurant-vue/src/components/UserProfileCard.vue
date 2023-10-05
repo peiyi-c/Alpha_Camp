@@ -2,7 +2,10 @@
   <div class="card mb-3">
     <div class="row no-gutters">
       <div class="col-md-5">
-        <img :src="user.image" style="width: 300px; height: 300px" />
+        <img
+          :src="emptyImage(user.image)"
+          style="width: 300px; height: 300px"
+        />
       </div>
       <div class="col-md-7">
         <div class="card-body">
@@ -62,7 +65,9 @@
   </div>
 </template>
 <script>
+import { emptyImageFilter } from "@/utils/mixins";
 export default {
+  mixins: [emptyImageFilter],
   props: {
     initialUser: {
       type: Object,

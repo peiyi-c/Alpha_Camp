@@ -29,6 +29,11 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` },
     });
   },
+  get({ userId }) {
+    return apiHelper.get(`/users/${userId}`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+  },
   addFollowing({ userId }) {
     return apiHelper.post(`/following/${userId}`, null, {
       headers: { Authorization: `Bearer ${getToken()}` },
