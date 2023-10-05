@@ -9,8 +9,13 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` },
     });
   },
-  getRestaurantsFeeds() {
+  getFeeds() {
     return apiHelper.get("/restaurants/feeds", {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+  },
+  getTopRestaurants() {
+    return apiHelper.get("/restaurants/top", {
       headers: { Authorization: `Bearer ${getToken()}` },
     });
   },

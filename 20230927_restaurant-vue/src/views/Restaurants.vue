@@ -71,6 +71,7 @@ export default {
           page: queryPage,
           categoryId: queryCategoryId,
         });
+
         const { data } = response;
         const {
           restaurants,

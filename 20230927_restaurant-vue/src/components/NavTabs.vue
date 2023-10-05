@@ -15,22 +15,22 @@ export default {
       tabs: [
         {
           id: crypto.randomUUID(),
-          title: "首頁",
+          title: "Home",
           path: "/restaurants",
         },
         {
           id: crypto.randomUUID(),
-          title: "最新動態",
+          title: "Newest Feeds",
           path: "/restaurants/feeds",
         },
         {
           id: crypto.randomUUID(),
-          title: "TOP 10 人氣餐廳",
+          title: "TOP 10 Popular Restaurants",
           path: "/restaurants/top",
         },
         {
           id: crypto.randomUUID(),
-          title: "美食達人",
+          title: "Culinary Delights Pros",
           path: "/users/top",
         },
       ],
