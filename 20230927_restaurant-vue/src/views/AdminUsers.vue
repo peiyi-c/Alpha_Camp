@@ -22,7 +22,9 @@
           <td>
             <button
               v-if="currentUser.id !== user.id"
-              @click.stop.prevent="toggleUserRole(user.id)"
+              @click.stop.prevent="
+                toggleUserRole({ userId: user.id, isAdmin: user.isAdmin })
+              "
               type="button"
               class="btn btn-link"
             >
@@ -37,41 +39,9 @@
 
 <script>
 import AdminNav from "@/components/AdminNav.vue";
+import adminAPI from "@/apis/admin.js";
+import { Toast } from "@/utils/helpers.js";
 
-const dummyData = {
-  users: [
-    {
-      id: 1,
-      name: "root",
-      email: "root@example.com",
-      password: "$2a$10$uiOzMVMpsMUy./phdefdsOw4qNXXSHwDoMrqXWdA7pmyEszMCP9eC",
-      isAdmin: true,
-      image: null,
-      createdAt: "2022-01-29T09:35:36.000Z",
-      updatedAt: "2022-01-29T09:35:36.000Z",
-    },
-    {
-      id: 2,
-      name: "user1",
-      email: "user1@example.com",
-      password: "$2a$10$RmEfHQwEkA3bc0yaburj2.MmSQyM.e1is8vGc5Y5b4CXhIsHRLgXu",
-      isAdmin: false,
-      image: null,
-      createdAt: "2022-01-29T09:35:37.000Z",
-      updatedAt: "2022-01-29T09:35:37.000Z",
-    },
-    {
-      id: 3,
-      name: "user2",
-      email: "user2@example.com",
-      password: "$2a$10$oc68qwsjVY0rOaoQxQTrQ.OQ5JQf99OdTQX1v97/yVnzJ/FtKUDQW",
-      isAdmin: false,
-      image: null,
-      createdAt: "2022-01-29T09:35:37.000Z",
-      updatedAt: "2022-01-29T09:35:37.000Z",
-    },
-  ],
-};
 const dummyUser = {
   currentUser: {
     id: 1,
@@ -97,23 +67,58 @@ export default {
     this.fetchUser();
   },
   methods: {
-    fetchUser() {
-      // this.users
-      this.users = dummyData.users;
-      // this.currentUser
-      this.currentUser = dummyUser.currentUser;
-    },
-    toggleUserRole(userId) {
-      this.users = this.users.map((user) => {
-        if (user.id === userId) {
-          return {
-            ...user,
-            isAdmin: !user.isAdmin,
-          };
-        } else {
-          return user;
+    async fetchUser() {
+      try {
+        const { data } = await adminAPI.users.get();
+        if (data.status === "error") {
+          throw new Error(data.message);
         }
-      });
+        // this.users
+        this.users = data.users;
+        // this.currentUser
+        this.currentUser = dummyUser.currentUser;
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "Can not get user data, please try it later",
+        });
+      }
+    },
+    async toggleUserRole({ userId, isAdmin }) {
+      try {
+        const { data } = await adminAPI.users.update({
+          userId,
+          isAdmin: !isAdmin,
+        });
+
+        console.log(data);
+
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+
+        this.users = this.users.map((user) => {
+          if (user.id === userId) {
+            return {
+              ...user,
+              isAdmin: !user.isAdmin,
+            };
+          } else {
+            return user;
+          }
+        });
+
+        Toast.fire({
+          icon: "success",
+          title: "User role changed successfully",
+        });
+      } catch (error) {
+        console.log(error);
+        Toast.fire({
+          icon: "error",
+          title: "Can not change user role, please try it later",
+        });
+      }
     },
   },
 };
