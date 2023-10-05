@@ -62,22 +62,31 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">
-        Submit
+      <button
+        :disabled="isProcessing"
+        class="btn btn-lg btn-primary btn-block mb-3"
+        type="submit"
+      >
+        {{ isProcessing ? "Processing" : "Submit" }}
       </button>
 
-      <div class="text-center mb-3">
-        <p>
-          <router-link to="/signin"> Sign In </router-link>
-        </p>
-      </div>
+      <button class="btn btn-outline-primary btn-block">
+        <router-link to="/signin" class="signin text-decoration-none">
+          Sign In
+        </router-link>
+      </button>
 
-      <p class="mt-5 mb-3 text-muted text-center">© 2017-2018</p>
+      <p class="mt-5 mb-3 text-muted text-center">
+        © 2017-{{ new Date().getFullYear() }}
+      </p>
     </form>
   </div>
 </template>
 
 <script>
+import authorizationAPI from "@/apis/authorization.js";
+import { Toast } from "@/utils/helpers.js";
+
 export default {
   data() {
     return {
@@ -85,20 +94,66 @@ export default {
       email: "",
       password: "",
       passwordCheck: "",
+      isProcessing: false,
     };
   },
   methods: {
-    handleSubmit(e) {
-      const data = JSON.stringify({
-        name: this.name,
-        email: this.email,
-        password: this.password,
-        passwordCheck: this.passwordCheck,
-      });
+    async handleSubmit(e) {
+      try {
+        if (
+          !this.name ||
+          !this.email ||
+          !this.password ||
+          !this.passwordCheck
+        ) {
+          Toast.fire({
+            icon: "warning",
+            title: "Please make sure to fill out all fields",
+          });
+          return;
+        }
+        if (this.password !== this.passwordCheck) {
+          Toast.fire({
+            icon: "warning",
+            title: "password and check do not match",
+          });
+          this.passwordCheck = "";
+          return;
+        }
 
-      // TODO: 向後端驗證使用者登入資訊是否合法
-      console.log("data", data);
+        this.isProcessing = true;
+        const { data } = await authorizationAPI.signUp({
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          passwordCheck: this.passwordCheck,
+        });
+        // if failed, throw error
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+
+        this.isProcessing = false;
+        Toast.fire({
+          icon: "success",
+          title: data.message,
+        });
+
+        // if successful, direct to signin
+        this.$router.push("/signin");
+      } catch (error) {
+        this.isProcessing = false;
+        Toast.fire({
+          icon: "warning",
+          title: `Can not sign up -  ${error.message}`,
+        });
+      }
     },
   },
 };
 </script>
+<style scoped>
+.btn:hover .signin {
+  color: #ffffff;
+}
+</style>
