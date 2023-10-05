@@ -190,11 +190,18 @@ export default {
         });
         return;
       }
-
       // *FormData*
       const form = e.target; // <form></form>
       const formData = new FormData(form);
       this.$emit("after-submit", formData);
+    },
+  },
+  watch: {
+    initialRestaurant(newValue) {
+      this.restaurant = {
+        ...this.restaurant,
+        ...newValue,
+      };
     },
   },
 };
