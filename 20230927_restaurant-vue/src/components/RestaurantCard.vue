@@ -5,8 +5,7 @@
         class="card-img-top"
         :src="restaurant.image"
         alt="Card image cap"
-        width="286px"
-        height="180px"
+        style="width: 100%; height: 180px; object-fit: cover"
       />
       <div class="card-body">
         <p class="card-text title-wrap">
@@ -92,7 +91,6 @@ export default {
           icon: "error",
           title: "Can not add to Favorite, please try it later",
         });
-        console.log("error", error);
       }
     },
     async deleteFavorite(restaurantId) {
@@ -110,7 +108,6 @@ export default {
           icon: "error",
           title: "Can remove from Favorite, please try it later",
         });
-        console.log("error", error);
       }
     },
     async addLike(restaurantId) {
@@ -128,7 +125,6 @@ export default {
           icon: "error",
           title: "Can not add Like, please try it later",
         });
-        console.log("error", error);
       }
     },
     async deleteLike(restaurantId) {
@@ -146,7 +142,6 @@ export default {
           icon: "error",
           title: "Can not cancel Like, please try it later",
         });
-        console.log("error", error);
       }
     },
   },
