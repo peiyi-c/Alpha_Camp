@@ -41,17 +41,7 @@
 import AdminNav from "@/components/AdminNav.vue";
 import adminAPI from "@/apis/admin.js";
 import { Toast } from "@/utils/helpers.js";
-
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-};
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -60,23 +50,19 @@ export default {
   data() {
     return {
       users: [],
-      currentUser: {},
     };
   },
   created() {
-    this.fetchUser();
+    this.fetchUsers();
   },
   methods: {
-    async fetchUser() {
+    async fetchUsers() {
       try {
         const { data } = await adminAPI.users.get();
         if (data.status === "error") {
           throw new Error(data.message);
         }
-        // this.users
         this.users = data.users;
-        // this.currentUser
-        this.currentUser = dummyUser.currentUser;
       } catch (error) {
         Toast.fire({
           icon: "error",
@@ -120,6 +106,9 @@ export default {
         });
       }
     },
+  },
+  computed: {
+    ...mapState(["currentUser"]),
   },
 };
 </script>
