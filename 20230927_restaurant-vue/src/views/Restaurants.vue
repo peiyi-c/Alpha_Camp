@@ -92,7 +92,7 @@ export default {
       } catch (error) {
         Toast.fire({
           icon: "error",
-          title: "Can not get restaurant data, please try later.",
+          title: `Can not get restaurant data, pleeese try it later.`,
         });
       }
     },

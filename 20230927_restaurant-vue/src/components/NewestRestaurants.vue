@@ -11,7 +11,7 @@
           </router-link>
           &nbsp;
           <small>{{
-            restaurant.Category ? restaurant.Category.name : "未分類"
+            restaurant.Category ? restaurant.Category.name : "none"
           }}</small>
         </h4>
         <p>{{ restaurant.description }}</p>

@@ -26,16 +26,7 @@ import CreateComment from "@/components/CreateComment.vue";
 import restaurantsAPI from "@/apis/restaurants.js";
 import { Toast } from "@/utils/helpers.js";
 
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-};
+import { mapState } from "vuex";
 
 export default {
   name: "Restaurant",
@@ -59,14 +50,22 @@ export default {
         isLiked: false,
       },
       restaurantComments: [],
-      currentUser: dummyUser.currentUser,
     };
   },
-  created() {
-    // 用this.$route.params取得動態路由的值
-    const id = this.$route.params;
-    this.fetchRestaurant(id);
+  computed: {
+    ...mapState(["currentUser"]),
   },
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+    this.fetchRestaurant(id);
+    next();
+  },
+  created() {
+    const { id } = this.$route.params;
+    this.fetchRestaurant(id);
+    console.log(`${this.$route.params}`);
+  },
+
   methods: {
     async fetchRestaurant(restaurantId) {
       try {
@@ -90,7 +89,7 @@ export default {
         this.restaurant = {
           id,
           name,
-          categoryName: Category.name || "uncategorized",
+          categoryName: Category.name || "none",
           image,
           openingHours,
           tel,

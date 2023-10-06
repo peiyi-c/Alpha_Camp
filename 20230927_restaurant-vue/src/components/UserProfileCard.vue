@@ -45,7 +45,7 @@
                 v-if="isFollowed"
                 type="button"
                 class="btn btn-danger"
-                @click.stop.prevent="deleteFollowing()"
+                @click.stop.prevent="deleteFollowing(user.id)"
               >
                 Unfollow
               </button>
@@ -53,7 +53,7 @@
                 v-else
                 type="button"
                 class="btn btn-primary"
-                @click.stop.prevent="addFollowing()"
+                @click.stop.prevent="addFollowing(user.id)"
               >
                 Follow
               </button>
@@ -66,6 +66,9 @@
 </template>
 <script>
 import { emptyImageFilter } from "@/utils/mixins";
+import usersAPI from "@/apis/users.js";
+import { Toast } from "@/utils/helpers.js";
+
 export default {
   mixins: [emptyImageFilter],
   props: {
@@ -90,11 +93,47 @@ export default {
   },
 
   methods: {
-    addFollowing() {
-      this.isFollowed = true;
+    async addFollowing({ userId }) {
+      try {
+        const { data } = await usersAPI.addFollowing({ userId: this.user.id });
+
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+
+        this.isFollowed = true;
+      } catch (error) {
+        console.log(error);
+        Toast.fire({
+          icon: "error",
+          title: "Can not follow user, please try it later",
+        });
+      }
     },
-    deleteFollowing() {
-      this.isFollowed = false;
+    async deleteFollowing({ userId }) {
+      try {
+        const { data } = await usersAPI.deleteFollowing({
+          userId: this.user.id,
+        });
+
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+        this.isFollowed = false;
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "Can not unfollow user, please try it later",
+        });
+      }
+    },
+  },
+  watch: {
+    initialIsFollowed(newValue) {
+      this.isFollowed = {
+        ...this.isFollowed,
+        ...newValue,
+      };
     },
   },
 };

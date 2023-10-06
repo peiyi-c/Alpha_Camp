@@ -78,20 +78,25 @@ export default {
         }
 
         this.isProcessing = true;
+
         const response = await authorizationAPI.signIn({
           email: this.email,
           password: this.password,
         });
+
         // data received via API request
         const { data } = response;
-        // if error throw error
 
+        // if error throw error
         if (data.status !== "success") {
           throw new Error(data.message);
         }
 
         // put data.token into localStorage
         localStorage.setItem("token", data.token);
+
+        // put data.user to the state in Vuex
+        this.$store.commit("setCurrentUser", data.user);
 
         // signin successful, redirect to /restaurants
         this.$router.push("/restaurants");

@@ -7,6 +7,11 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` },
     });
   },
+  getDashboard({ restaurantId }) {
+    return apiHelper.get(`/restaurants/${restaurantId}/dashboard`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+  },
   getRestaurants({ page, categoryId }) {
     const searchParams = new URLSearchParams({ page, categoryId });
     // axios.get(url, config)

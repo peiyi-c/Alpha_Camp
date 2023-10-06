@@ -33,17 +33,8 @@ import UserFavoritedRestaurantsCard from "@/components/UserFavoritedRestaurantsC
 
 import usersAPI from "@/apis/users.js";
 import { Toast } from "@/utils/helpers.js";
+import { mapState } from "vuex";
 
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-};
 export default {
   name: "User",
   components: {
@@ -70,13 +61,11 @@ export default {
       followers: [],
       comments: [],
       favoritedRestaurants: [],
-      currentUser: {},
     };
   },
   created() {
     const { id } = this.$route.params;
     this.fetchUser(id);
-    this.currentUser = dummyUser.currentUser;
   },
   beforeRouteUpdate(to, from, next) {
     const { id } = to.params;
@@ -127,6 +116,9 @@ export default {
         });
       }
     },
+  },
+  computed: {
+    ...mapState(["currentUser"]),
   },
 };
 </script>

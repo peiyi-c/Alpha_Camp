@@ -2,6 +2,16 @@ import { apiHelper } from "@/utils/helpers.js";
 const getToken = () => localStorage.getItem("token");
 
 export default {
+  get({ userId }) {
+    return apiHelper.get(`/users/${userId}`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+  },
+  getCurrentUser() {
+    return apiHelper.get("/get_current_user", {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+  },
   addFavorite({ restaurantId }) {
     // axios.post(url, data, config)
     return apiHelper.post(`/favorite/${restaurantId}`, null, {
@@ -29,11 +39,7 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` },
     });
   },
-  get({ userId }) {
-    return apiHelper.get(`/users/${userId}`, {
-      headers: { Authorization: `Bearer ${getToken()}` },
-    });
-  },
+
   addFollowing({ userId }) {
     return apiHelper.post(`/following/${userId}`, null, {
       headers: { Authorization: `Bearer ${getToken()}` },

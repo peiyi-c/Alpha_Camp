@@ -13,6 +13,9 @@
   </form>
 </template>
 <script>
+import commentsAPI from "@/apis/comments.js";
+import { Toast } from "@/utils/helpers.js";
+
 export default {
   props: {
     restaurantId: {
@@ -26,17 +29,40 @@ export default {
     };
   },
   methods: {
-    handleSubmit() {
-      // TODO: 向 API 發送 POST 請求
-      // 伺服器新增 Comment 成功後...
-      this.$emit("after-create-comment", {
-        // 尚未串接 API 暫時使用隨機的 id
-        commentId: crypto.randomUUID(),
-        restaurantId: this.restaurantId,
-        text: this.text,
-      });
-      // empty textarea
-      this.text = "";
+    async handleSubmit() {
+      try {
+        if (!this.text) {
+          Toast.fire({
+            icon: "warning",
+            title: "Comment can not be empty",
+          });
+          return;
+        }
+        const { data } = await commentsAPI.create({
+          commentId: crypto.randomUUID(),
+          restaurantId: this.restaurantId,
+          text: this.text,
+        });
+
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+
+        this.$emit("after-create-comment", {
+          commentId: data.commentId,
+          restaurantId: this.restaurantId,
+          text: this.text,
+        });
+        // empty textarea
+        this.text = "";
+      } catch (error) {
+        console.error(error.message);
+
+        Toast.fire({
+          icon: "error",
+          title: "Can not add new comment, please try it later",
+        });
+      }
     },
   },
 };

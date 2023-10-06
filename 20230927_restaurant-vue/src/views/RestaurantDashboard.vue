@@ -35,24 +35,25 @@ export default {
     };
   },
   created() {
-    const id = this.$route.params;
+    const { id } = this.$route.params;
     this.fetchRestaurant(id);
   },
   methods: {
     async fetchRestaurant(restaurantId) {
       try {
-        const { data } = await restaurantsAPI.get({ restaurantId });
+        const { data } = await restaurantsAPI.getDashboard({ restaurantId });
 
         if (data.status === "error") {
           throw new Error(data.message);
         }
 
         const { id, name, Category, Comments, viewCounts } = data.restaurant;
+
         this.restaurant = {
           ...this.restaurant,
           id,
           name,
-          categoryName: Category ? Category.name : "uncategorized",
+          categoryName: Category.name || "none",
           commentsLength: Comments.length,
           viewCounts,
         };

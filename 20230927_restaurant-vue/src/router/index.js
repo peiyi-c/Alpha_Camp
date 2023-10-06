@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import SignIn from "@/views/SignIn.vue";
 import Restaurants from "@/views/Restaurants.vue";
+import store from "@/store/index.js";
 
 const routes = [
   {
@@ -22,7 +23,6 @@ const routes = [
     path: "/restaurants",
     name: "restaurants",
     component: Restaurants,
-    //props: (route) => ({ query: route.query.categoryId }),
   },
   {
     path: "/restaurants/feeds",
@@ -107,4 +107,8 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  store.dispatch("fetchCurrentUser");
+  next();
+});
 export default router;

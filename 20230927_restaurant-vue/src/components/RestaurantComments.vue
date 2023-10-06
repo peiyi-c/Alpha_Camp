@@ -27,18 +27,12 @@
 </template>
 <script>
 import { fromNowFilter } from "@/utils/mixins.js";
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-};
+import commentsAPI from "@/apis/comments.js";
+import { Toast } from "@/utils/helpers.js";
+import { mapState } from "vuex";
 
 export default {
+  name: "RestaurantComments",
   mixins: [fromNowFilter],
   props: {
     restaurantComments: {
@@ -46,18 +40,31 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      currentUser: dummyUser.currentUser,
-    };
-  },
   methods: {
-    handleDeleteButtonClick(id) {
-      console.log("handleDeleteButtonClick", id);
-      // TODO: 請求 API 伺服器刪除 id 為 commentId 的評論
-      // 觸發父層事件 - $emit( '事件名稱' , 傳遞的資料 )
-      this.$emit("after-delete-comment", id);
+    async handleDeleteButtonClick(commentId) {
+      try {
+        const { data } = await commentsAPI.delete({ commentId });
+
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+
+        Toast.fire({
+          icon: "success",
+          title: "Comment deleted!",
+        });
+
+        this.$emit("after-delete-comment", commentId);
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "Can not remove comment, please try it later.",
+        });
+      }
     },
+  },
+  computed: {
+    ...mapState(["currentUser"]),
   },
 };
 </script>
