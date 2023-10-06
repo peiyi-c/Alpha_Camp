@@ -7,6 +7,11 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` },
     });
   },
+  update({ userId, formData }) {
+    return apiHelper.put(`/users/${userId}`, formData, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+  },
   getCurrentUser() {
     return apiHelper.get("/get_current_user", {
       headers: { Authorization: `Bearer ${getToken()}` },

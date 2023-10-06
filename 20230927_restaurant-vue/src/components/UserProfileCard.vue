@@ -93,9 +93,9 @@ export default {
   },
 
   methods: {
-    async addFollowing({ userId }) {
+    async addFollowing(userId) {
       try {
-        const { data } = await usersAPI.addFollowing({ userId: this.user.id });
+        const { data } = await usersAPI.addFollowing({ userId });
 
         if (data.status === "error") {
           throw new Error(data.message);
@@ -110,10 +110,10 @@ export default {
         });
       }
     },
-    async deleteFollowing({ userId }) {
+    async deleteFollowing(userId) {
       try {
         const { data } = await usersAPI.deleteFollowing({
-          userId: this.user.id,
+          userId,
         });
 
         if (data.status === "error") {
@@ -129,9 +129,12 @@ export default {
     },
   },
   watch: {
-    initialIsFollowed(newValue) {
-      this.isFollowed = {
-        ...this.isFollowed,
+    initialIsFollowed(isFollowed) {
+      this.isFollowed = isFollowed;
+    },
+    initialUser(newValue) {
+      this.user = {
+        ...this.initialUser,
         ...newValue,
       };
     },

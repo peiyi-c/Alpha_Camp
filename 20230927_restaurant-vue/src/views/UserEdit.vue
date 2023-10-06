@@ -4,6 +4,7 @@
       <div class="form-group">
         <label for="name">Name</label>
         <input
+          v-model="user.name"
           id="name"
           type="text"
           name="name"
@@ -32,21 +33,16 @@
         />
       </div>
 
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button :disabled="isProcessing" type="submit" class="btn btn-primary">
+        {{ isProcessing ? "Processing" : "Submit" }}
+      </button>
     </form>
   </div>
 </template>
 <script>
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-};
+import usersAPI from "@/apis/users.js";
+import { Toast } from "@/utils/helpers.js";
+import { mapState } from "vuex";
 
 export default {
   data() {
@@ -57,17 +53,29 @@ export default {
         email: "",
         image: "",
       },
+      isProcessing: false,
     };
   },
   created() {
+    if (this.currentUser.id === -1) return;
     const { id } = this.$route.params;
-    this.fetchUser();
+    this.setUser(id);
+  },
+  beforeRouteUpdate(to, from, next) {
+    if (this.currentUser.id === -1) return;
+    const { id } = to.params;
+    this.setUser(id);
+    next();
   },
   methods: {
-    fetchUser(userId) {
-      console.log("userId", userId);
-      const { currentUser } = dummyUser;
-      const { id, image, name, email } = currentUser;
+    setUser(userId) {
+      const { id, image, name, email } = this.currentUser;
+
+      if (id.toString() !== userId.toString()) {
+        this.$router.push({ name: "NotFound" });
+        return;
+      }
+
       this.user = {
         ...this.user,
         id,
@@ -85,12 +93,48 @@ export default {
         this.user.image = imageURL;
       }
     },
-    handleSubmit(e) {
-      const form = e.target;
-      const formData = new FormData(form);
-      for (const [key, value] of formData.entries()) {
-        console.log(key + ": " + value);
+    async handleSubmit(e) {
+      try {
+        if (!this.user.name) {
+          Toast.fire({
+            icon: "error",
+            title: "Name can not be empty",
+          });
+          return;
+        }
+        // for (const [key, value] of formData.entries()) {
+        //   console.log(key + ": " + value);
+        // }
+        this.isProcessing = true;
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const { data } = await usersAPI.update({
+          userId: this.user.id,
+          formData,
+        });
+
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+        this.$router.push({ name: "user", params: { id: this.user.id } });
+      } catch (error) {
+        this.isProcessing = false;
+        Toast.fire({
+          icon: "error",
+          title: "Can not get user data, please try it later",
+        });
       }
+    },
+  },
+  computed: {
+    ...mapState(["currentUser"]),
+  },
+  watch: {
+    currentUser(user) {
+      if (user.id === -1) return;
+      const { id } = this.$route.params;
+      this.setUser(id);
     },
   },
 };
