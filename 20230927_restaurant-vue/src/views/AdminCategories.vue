@@ -3,7 +3,8 @@
     <!-- AdminNav -->
     <AdminNav />
     <!-- add restaurant category form -->
-    <form class="my-4">
+    <Spinner v-if="isLoading" />
+    <form v-else class="my-4">
       <div class="form-row">
         <div class="col-auto">
           <input
@@ -95,15 +96,18 @@
 import AdminNav from "@/components/AdminNav.vue";
 import adminAPI from "@/apis/admin.js";
 import { Toast } from "@/utils/helpers.js";
+import Spinner from "@/components/Spinner.vue";
 
 export default {
   components: {
     AdminNav,
+    Spinner,
   },
   data() {
     return {
       categories: [],
       newCategoryName: "",
+      isLoading: true,
     };
   },
   created() {
@@ -124,8 +128,9 @@ export default {
             nameCached: "",
           };
         });
+        this.isLoading = false;
       } catch (error) {
-        console.error(error.message);
+        this.isLoading = false;
         Toast.fire({
           icon: "error",
           title: "Can not get restaurant categories, please try it later",

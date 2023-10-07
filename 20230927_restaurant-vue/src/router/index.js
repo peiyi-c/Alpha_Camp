@@ -3,6 +3,15 @@ import SignIn from "@/views/SignIn.vue";
 import Restaurants from "@/views/Restaurants.vue";
 import store from "@/store/index.js";
 
+const authorizeIsAdmin = (to, from, next) => {
+  const currentUser = store.state.currentUser;
+  if (currentUser && !currentUser.isAdmin) {
+    next("/404");
+    return;
+  }
+  next();
+};
+
 const routes = [
   {
     path: "/",
@@ -53,31 +62,37 @@ const routes = [
     path: "/admin/restaurants",
     name: "admin-restaurants",
     component: () => import("@/views/AdminRestaurants.vue"),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: "/admin/restaurants/new",
     name: "admin-restaurant-new",
     component: () => import("@/views/AdminRestaurantNew.vue"),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: "/admin/restaurants/:id",
     name: "admin-restaurant",
     component: () => import("@/views/AdminRestaurant.vue"),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: "/admin/restaurants/:id/edit",
     name: "admin-restaurant-edit",
     component: () => import("@/views/AdminRestaurantEdit.vue"),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: "/admin/categories",
     name: "admin-categories",
     component: () => import("@/views/AdminCategories.vue"),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: "/admin/users",
     name: "admin-users",
     component: () => import("../views/AdminUsers.vue"),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: "/users/top",
@@ -107,8 +122,30 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  store.dispatch("fetchCurrentUser");
+router.beforeEach(async (to, from, next) => {
+  const tokenInLocalStorage = localStorage.getItem("token");
+  const tokenInStore = store.state.token;
+  let isAuthenticated = store.state.isAuthenticated;
+
+  // compare token in localStorage and token in store
+  if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
+    isAuthenticated = await store.dispatch("fetchCurrentUser");
+  }
+
+  // signin and signup page do not need token verification
+  const pathsWithoutAuthentication = ["sign-up", "sign-in"];
+
+  // if login failed, redirect to signin
+  if (!isAuthenticated && !pathsWithoutAuthentication.includes(to.name)) {
+    next("/signin");
+    return;
+  }
+  // if login successful, redirect to restaurants
+  if (isAuthenticated && pathsWithoutAuthentication.includes(to.name)) {
+    next("/restaurants");
+    return;
+  }
+
   next();
 });
 export default router;

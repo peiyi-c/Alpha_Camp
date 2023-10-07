@@ -1,6 +1,5 @@
 import { createStore } from "vuex";
 import usersAPI from "@/apis/users.js";
-import { Toast } from "@/utils/helpers.js";
 
 export default createStore({
   //data()
@@ -13,6 +12,7 @@ export default createStore({
       isAdmin: false,
     },
     isAuthenticated: false,
+    token: "",
   },
   getters: {},
   //methods:
@@ -23,7 +23,14 @@ export default createStore({
         // get through API
         ...currentUser,
       };
+      state.token = localStorage.getItem("token");
       state.isAuthenticated = true;
+    },
+    revokeAuthentication(state) {
+      state.currentUser = {};
+      state.isAuthenticated = false;
+      state.token = "";
+      localStorage.removeItem("token");
     },
   },
   // get data throught API
@@ -40,8 +47,15 @@ export default createStore({
           image,
           isAdmin,
         });
+
+        //login valid
+        return true;
       } catch (error) {
         console.log(error.message);
+
+        commit("revokeAuthentication");
+        //login invalid
+        return false;
       }
     },
   },

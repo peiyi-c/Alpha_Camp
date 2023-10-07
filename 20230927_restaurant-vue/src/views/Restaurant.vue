@@ -1,21 +1,24 @@
 <template>
   <div class="container py-5">
-    <h1>Restaurant Detail</h1>
-    <!-- RestaurantDetail -->
-    <RestaurantDetail :initial-restaurant="restaurant" />
-    <hr />
+    <Spinner v-if="isLoading" />
+    <template v-else>
+      <h1>Restaurant Detail</h1>
+      <!-- RestaurantDetail -->
+      <RestaurantDetail :initial-restaurant="restaurant" />
+      <hr />
 
-    <!-- RestaurantComments -->
-    <RestaurantComments
-      :restaurant-comments="restaurantComments"
-      @after-delete-comment="afterDeleteComment"
-    />
+      <!-- RestaurantComments -->
+      <RestaurantComments
+        :restaurant-comments="restaurantComments"
+        @after-delete-comment="afterDeleteComment"
+      />
 
-    <!-- CreateComment -->
-    <CreateComment
-      :restaurant-id="restaurant.id"
-      @after-create-comment="afterCreateComment"
-    />
+      <!-- CreateComment -->
+      <CreateComment
+        :restaurant-id="restaurant.id"
+        @after-create-comment="afterCreateComment"
+      />
+    </template>
   </div>
 </template>
 
@@ -25,6 +28,7 @@ import RestaurantComments from "@/components/RestaurantComments.vue";
 import CreateComment from "@/components/CreateComment.vue";
 import restaurantsAPI from "@/apis/restaurants.js";
 import { Toast } from "@/utils/helpers.js";
+import Spinner from "@/components/Spinner.vue";
 
 import { mapState } from "vuex";
 
@@ -34,6 +38,7 @@ export default {
     RestaurantDetail,
     RestaurantComments,
     CreateComment,
+    Spinner,
   },
   data() {
     return {
@@ -50,6 +55,7 @@ export default {
         isLiked: false,
       },
       restaurantComments: [],
+      isLoading: true,
     };
   },
   computed: {
@@ -69,6 +75,7 @@ export default {
   methods: {
     async fetchRestaurant(restaurantId) {
       try {
+        this.isLoading = true;
         const { data } = await restaurantsAPI.get({ restaurantId });
 
         if (data.status === "error") {
@@ -99,7 +106,9 @@ export default {
           isLiked,
         };
         this.restaurantComments = Comments;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           icon: "error",
           title: "Can not get restaurant data, please try it later",

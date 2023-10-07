@@ -2,9 +2,9 @@
   <div class="container py-5">
     <!-- AdminNav Component -->
     <AdminNav />
-
+    <Spinner v-if="isLoading" />
     <!-- admin users list -->
-    <table class="table">
+    <table v-else class="table">
       <thead class="thead-dark">
         <tr>
           <th scope="col">#</th>
@@ -42,14 +42,17 @@ import AdminNav from "@/components/AdminNav.vue";
 import adminAPI from "@/apis/admin.js";
 import { Toast } from "@/utils/helpers.js";
 import { mapState } from "vuex";
+import Spinner from "@/components/Spinner.vue";
 
 export default {
   components: {
     AdminNav,
+    Spinner,
   },
   data() {
     return {
       users: [],
+      isLoading: true,
     };
   },
   created() {
@@ -58,12 +61,15 @@ export default {
   methods: {
     async fetchUsers() {
       try {
+        this.isLoading = true;
         const { data } = await adminAPI.users.get();
         if (data.status === "error") {
           throw new Error(data.message);
         }
         this.users = data.users;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           icon: "error",
           title: "Can not get user data, please try it later",
@@ -74,10 +80,8 @@ export default {
       try {
         const { data } = await adminAPI.users.update({
           userId,
-          isAdmin: !isAdmin,
+          isAdmin: (!isAdmin).toString(),
         });
-
-        console.log(data);
 
         if (data.status === "error") {
           throw new Error(data.message);

@@ -43,6 +43,7 @@
             <div v-else>
               <button
                 v-if="isFollowed"
+                :disabled="isProcessing"
                 type="button"
                 class="btn btn-danger"
                 @click.stop.prevent="deleteFollowing(user.id)"
@@ -51,6 +52,7 @@
               </button>
               <button
                 v-else
+                :disabled="isProcessing"
                 type="button"
                 class="btn btn-primary"
                 @click.stop.prevent="addFollowing(user.id)"
@@ -89,12 +91,14 @@ export default {
     return {
       user: this.initialUser,
       isFollowed: this.initialIsFollowed,
+      isProcessing: false,
     };
   },
 
   methods: {
     async addFollowing(userId) {
       try {
+        this.isProcessing = true;
         const { data } = await usersAPI.addFollowing({ userId });
 
         if (data.status === "error") {
@@ -102,8 +106,9 @@ export default {
         }
 
         this.isFollowed = true;
+        this.isProcessing = false;
       } catch (error) {
-        console.log(error);
+        this.isProcessing = false;
         Toast.fire({
           icon: "error",
           title: "Can not follow user, please try it later",
@@ -112,6 +117,7 @@ export default {
     },
     async deleteFollowing(userId) {
       try {
+        this.isProcessing = true;
         const { data } = await usersAPI.deleteFollowing({
           userId,
         });
@@ -120,7 +126,9 @@ export default {
           throw new Error(data.message);
         }
         this.isFollowed = false;
+        this.isProcessing = false;
       } catch (error) {
+        this.isProcessing = false;
         Toast.fire({
           icon: "error",
           title: "Can not unfollow user, please try it later",

@@ -80,12 +80,12 @@ a:hover {
   border-color: #bd2333;
 }
 
-.btn-outline-success {
+.btn-outline-alert {
   border-color: white;
   border-width: 1px;
 }
 
-.btn-outline-success:hover {
+.btn-outline-alert:hover {
   color: rgba(255, 255, 255, 0.85);
   border-color: rgba(255, 255, 255, 0.85);
   border-width: 1px;

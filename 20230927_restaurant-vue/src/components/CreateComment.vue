@@ -53,11 +53,10 @@ export default {
           restaurantId: this.restaurantId,
           text: this.text,
         });
+
         // empty textarea
         this.text = "";
       } catch (error) {
-        console.error(error.message);
-
         Toast.fire({
           icon: "error",
           title: "Can not add new comment, please try it later",

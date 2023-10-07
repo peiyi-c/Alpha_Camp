@@ -1,4 +1,5 @@
 <template>
+  <Spinner v-if="isLoading" />
   <div class="container py-5">
     <div>
       <h1>{{ restaurant.name }}</h1>
@@ -21,8 +22,13 @@
 <script>
 import restaurantsAPI from "@/apis/restaurants.js";
 import { Toast } from "@/utils/helpers.js";
+import Spinner from "@/components/Spinner.vue";
+
 export default {
   name: "RestaurantDashboard",
+  components: {
+    Spinner,
+  },
   data() {
     return {
       restaurant: {
@@ -32,6 +38,7 @@ export default {
         commentsLength: 0,
         viewCounts: 0,
       },
+      isLoading: true,
     };
   },
   created() {
@@ -40,6 +47,7 @@ export default {
   },
   methods: {
     async fetchRestaurant(restaurantId) {
+      this.isLoading = true;
       try {
         const { data } = await restaurantsAPI.getDashboard({ restaurantId });
 
@@ -57,7 +65,9 @@ export default {
           commentsLength: Comments.length,
           viewCounts,
         };
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           icon: "error",
           title: "Can not get restaurant detail, please try it later",

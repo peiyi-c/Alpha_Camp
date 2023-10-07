@@ -22,7 +22,7 @@
           to="/admin"
           class="text-white mr-3"
         >
-          Admin Management Area
+          Admin Section
         </router-link>
         <template v-if="isAuthenticated">
           <!-- is user is login -->
@@ -30,11 +30,12 @@
             :to="{ name: 'user', params: { id: currentUser.id } }"
             class="text-white mr-3"
           >
-            Hi! {{ currentUser.name || "User" }}
+            Hi, {{ currentUser.name || "User" }}
           </router-link>
           <button
+            @click="logout"
             type="button"
-            class="btn btn-sm btn-outline-success my-2 my-sm-0"
+            class="btn btn-sm btn-outline-alert my-1 my-sm-0"
           >
             Logout
           </button>
@@ -47,6 +48,12 @@
 <script>
 import { mapState } from "vuex";
 export default {
+  methods: {
+    logout() {
+      this.$store.commit("revokeAuthentication");
+      this.$router.push("/signin");
+    },
+  },
   computed: {
     ...mapState(["currentUser", "isAuthenticated"]),
   },
