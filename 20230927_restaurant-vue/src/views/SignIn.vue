@@ -41,11 +41,11 @@
         Submit
       </button>
 
-      <button class="btn btn-outline-primary btn-block">
-        <router-link to="/signup" class="signup text-decoration-none">
+      <p class="text-center">
+        <router-link to="/signup" class="text-decoration-none">
           Sign Up
         </router-link>
-      </button>
+      </p>
 
       <p class="mt-5 mb-3 text-muted text-center">
         &copy; 2017-{{ new Date().getFullYear() }}
@@ -115,9 +115,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.btn:hover .signup {
-  color: #ffffff;
-}
-</style>

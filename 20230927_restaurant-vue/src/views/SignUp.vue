@@ -70,11 +70,11 @@
         {{ isProcessing ? "Processing" : "Submit" }}
       </button>
 
-      <button class="btn btn-outline-primary btn-block">
-        <router-link to="/signin" class="signin text-decoration-none">
+      <p class="text-center">
+        <router-link to="/signin" class="text-decoration-none">
           Sign In
         </router-link>
-      </button>
+      </p>
 
       <p class="mt-5 mb-3 text-muted text-center">
         © 2017-{{ new Date().getFullYear() }}
@@ -152,8 +152,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.btn:hover .signin {
-  color: #ffffff;
-}
-</style>

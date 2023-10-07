@@ -20,17 +20,17 @@ export default {
         },
         {
           id: crypto.randomUUID(),
-          title: "Newest Feeds",
+          title: "Feeds",
           path: "/restaurants/feeds",
         },
         {
           id: crypto.randomUUID(),
-          title: "TOP 10 Popular Restaurants",
+          title: "TOP 10 ",
           path: "/restaurants/top",
         },
         {
           id: crypto.randomUUID(),
-          title: "Culinary Delights Pros",
+          title: "Culinary Pros",
           path: "/users/top",
         },
       ],
@@ -38,3 +38,18 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.nav-tabs {
+  border-bottom: 1px solid #bd2333;
+}
+
+.nav-tabs .nav-link:focus,
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-item.show .nav-link,
+.nav-tabs .nav-link.active {
+  border-color: #bd2333;
+  background-color: #bd2333;
+  color: white;
+}
+</style>

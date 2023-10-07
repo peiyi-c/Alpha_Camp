@@ -4,6 +4,8 @@ import "bootstrap"; //node_module/bootstrap/package.json -> "main": "dist/js/boo
 import "bootstrap/dist/css/bootstrap.min.css";
 // sweetalert2 css
 import "sweetalert2/dist/sweetalert2.min.css";
+// level up css
+import "@/assets/application.css";
 
 import Navbar from "@/components/Navbar.vue";
 
@@ -23,4 +25,8 @@ export default {
   </div>
 </template>
 
-<style></style>
+<style scoped>
+main {
+  margin-top: 65px !important;
+}
+</style>
