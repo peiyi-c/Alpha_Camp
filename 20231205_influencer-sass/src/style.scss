@@ -1,0 +1,310 @@
+@use "./sass" as *;
+
+html {
+  font-size: 16px;
+  height: 100%;
+}
+
+body {
+  //height: 100%; //目前瀏覽器的高度
+  background: $body-bg;
+  color: $body-color;
+  font-family: "PingFang TC";
+}
+
+// navigation //
+nav {
+  width: 60px;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  padding: 16px 0;
+  background-color: $main-blue;
+  z-index: 100;
+  a {
+    display: block;
+    color: $white;
+  }
+  .menu a {
+    margin-bottom: 10px;
+  }
+  i {
+    font-size: 26px;
+  }
+}
+
+// main
+#main-content {
+  margin-left: 60px;
+}
+
+// main - left
+.card-list-panel {
+  flex: 0 0 250px;
+  background-color: $white;
+  @extend %standard-boxshadow;
+  overflow-y: scroll;
+  z-index: 20;
+
+  .card {
+    width: 200px;
+    margin-top: 16px;
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.09);
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0.5;
+
+    &:hover,
+    &.active {
+      opacity: 1;
+    }
+    &.active {
+      border-color: $light-gray;
+    }
+
+    i {
+      width: 20px;
+      font-size: 16px;
+      text-align: center;
+      margin-right: 5px;
+      &.fa-youtube {
+        color: #f11502;
+      }
+      &.fa-facebook-square {
+        color: #4177f2;
+      }
+      &.fa-instagram {
+        color: #5b30da;
+      }
+      &.fa-facebook-square,
+      &.fa-instagram {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+.scrollbar {
+  padding-left: $scroll-width;
+  @include scrollbar($scroll-width, rgba(0, 0, 0, 0.1), $white);
+}
+
+// main - right //
+.right-content {
+  flex: 1;
+  .container {
+    width: 80%;
+    margin: 0 auto;
+  }
+}
+
+// stepper
+.stepper-panel {
+  height: 120px;
+  padding-top: 40px;
+}
+
+.step {
+  flex: 1;
+  text-align: center;
+  position: relative; // for .connect-line
+
+  @include addStepNums(3, circle-container);
+
+  .circle-container {
+    height: $circle-size;
+    width: $circle-size;
+    background-color: $light-gray;
+    border-radius: 50%;
+    color: $dark-gray;
+    margin: 0 auto;
+  }
+  .label-container {
+    margin-top: 10px;
+    color: $light-gray;
+  }
+
+  &.checked,
+  &.active {
+    .circle-container {
+      background-color: $freedom-blue;
+      color: $body-color;
+    }
+    .label-container {
+      color: $body-color;
+    }
+  }
+  &.checked .circle-container::after {
+    content: "\2714";
+  }
+}
+
+.connect-line {
+  display: block;
+  height: 1px;
+  background-color: $light-gray;
+
+  position: absolute;
+  top: calc($circle-size / 2);
+  right: calc(50% + $circle-size / 2 + 8px);
+  left: calc(-50% + $circle-size / 2 + 8px);
+  &.active {
+    height: 2px;
+  }
+}
+
+// form
+.form-panel {
+  @extend %standard-boxshadow;
+  background-color: $white;
+  padding: 32px 0;
+  flex: 1;
+  overflow-y: scroll;
+  .form-container {
+    width: 80%;
+    margin: 0 auto;
+  }
+  .form-content {
+    flex: 1;
+  }
+  .terms-panel {
+    max-height: 300px;
+    padding: 16px;
+    border: 1px solid $light-gray;
+    border-radius: 5px;
+    overflow-y: scroll;
+  }
+}
+
+form {
+  .form-row {
+    margin-bottom: 24px;
+    > label {
+      display: block;
+      margin: 0;
+      font-weight: 500;
+    }
+    %input-style {
+      border: 1px solid $light-gray;
+      border-radius: 5px;
+      font-size: 16px;
+      padding: 0.5em;
+    }
+    input {
+      @extend %input-style;
+      &:hover,
+      &:focus {
+        border-color: $dark-gray;
+      }
+      &[type="checkbox"],
+      &[type="radio"] {
+        cursor: pointer;
+        ~ label {
+          display: inline-block;
+          font-weight: normal;
+          margin: 0;
+        }
+      }
+      &[type="checkbox"] {
+        -webkit-appearance: none; // 取消瀏覽器預設
+        appearance: none;
+        border-radius: 3px;
+        position: relative; // ::after
+        &:checked {
+          background-color: $secondary-blue;
+          &::after {
+            content: "\2714";
+            color: $white;
+            font-size: 12px;
+            position: absolute;
+            top: 0;
+            left: 3px;
+          }
+        }
+        &:focus {
+          border-color: $light-gray;
+        }
+        &:hover {
+          border-color: $dark-gray;
+        }
+      }
+      &[type="radio"] {
+        -webkit-appearance: none; // 取消瀏覽器預設
+        appearance: none;
+        border-radius: 50%;
+
+        &:checked {
+          box-shadow: inset 0 0 0 5px $secondary-blue;
+        }
+        ~ label {
+          margin-right: 20px;
+        }
+      }
+      &[type="date"] {
+        cursor: pointer;
+        &:invalid {
+          color: #747474;
+        }
+      }
+      &[type="number"] {
+        width: 60px;
+      }
+    }
+    .select-wrapper {
+      width: 25%;
+      position: relative; // ::after
+      z-index: 0;
+      &::after {
+        content: "";
+        border-style: solid;
+        border-width: 6px 5px 0 5px;
+        border-color: $light-gray transparent transparent transparent;
+        position: absolute;
+        top: 50%;
+        right: 8px;
+        transform: translateY(-50%);
+        z-index: -1;
+      }
+    }
+    select {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      background: transparent;
+      cursor: pointer;
+      @extend %input-style;
+      &:invalid {
+        color: #747474;
+      }
+    }
+    textarea {
+      @extend %input-style;
+      resize: none;
+      overflow-y: scroll;
+    }
+  }
+  .btn {
+    font-size: 16px;
+    border-radius: 5px;
+    height: 32px;
+    padding: 0 16px;
+    box-shadow: 1px 1px 5px #a6a6a6;
+    &:hover {
+      box-shadow: 1px 1px 5px $light-gray;
+    }
+    &:disabled {
+      opacity: 0.5;
+    }
+    &-primary {
+      color: $white;
+      background-color: $secondary-blue;
+    }
+    &-outline {
+      color: $dark-gray;
+      background-color: $white;
+    }
+  }
+}
