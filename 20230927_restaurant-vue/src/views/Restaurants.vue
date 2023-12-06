@@ -63,13 +63,14 @@ export default {
     };
   },
   created() {
-    const { page = "", categoryId = "" } = this.$route.query;
+    const { page = "", categoryId = "" } = this.$route.query; // 取得動態路由資訊
     this.fetchRestaurants({
       queryPage: page,
       queryCategoryId: categoryId,
     });
   },
   beforeRouteUpdate(to, from, next) {
+    // 在網址產生變化時，重新向後端發送 request
     const { page = "", categoryId = "" } = to.query;
     this.fetchRestaurants({ queryPage: page, queryCategoryId: categoryId });
     next();
